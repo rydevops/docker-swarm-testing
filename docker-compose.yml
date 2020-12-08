@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  web:
+    image: ds01.demolab.com:5001/sleep:1.0.0
+    env_file: postgres.env
+    restart: always
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 60s
+  database:
+    image: ds01.demolab.com:5001/postgres:13.1
+    restart: always
+    env_file: postgres.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.labels.database==true"
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 60s
+
+volumes:
+  pgdata:
